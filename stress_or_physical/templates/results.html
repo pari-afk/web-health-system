@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Your Analysis</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #EEF2F7;
+    --surface: #FFFFFF;
+    --navy: #0B1F3A;
+    --teal: #0C9B97;
+    --teal-dim: #D6F0EF;
+    --stress: #D95D2B;
+    --stress-dim: #FCEEE8;
+    --physical: #0D8A6A;
+    --physical-dim: #E2F3ED;
+    --text: #0B1F3A;
+    --muted: #5A6A7E;
+    --border: #CDD7E3;
+    --shadow: 0 1px 3px rgba(11,31,58,0.06), 0 4px 16px rgba(11,31,58,0.05);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--bg);
+    padding: 40px 20px;
+    color: var(--text);
+  }
+  .container { max-width: 680px; margin: 0 auto; }
+
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--muted);
+    text-decoration: none;
+    margin-bottom: 32px;
+    letter-spacing: 0.02em;
+    transition: color 0.15s;
+  }
+  .back:hover { color: var(--navy); }
+
+  .page-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--teal);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+  }
+  h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 30px;
+    margin-bottom: 6px;
+    color: var(--navy);
+    letter-spacing: -0.01em;
+  }
+  .subtitle { color: var(--muted); font-size: 14px; font-weight: 300; margin-bottom: 32px; }
+
+  .card {
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 26px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+  }
+
+  /* Red flag */
+  .red-flag-card {
+    background: var(--surface);
+    border-left: 4px solid var(--stress);
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin-bottom: 14px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    box-shadow: var(--shadow);
+  }
+  .red-flag-card .icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .red-flag-card strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #A83E16;
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+  .red-flag-card p { font-size: 13px; color: #7A3A30; line-height: 1.55; font-weight: 300; }
+
+  /* Classification badge */
+  .classification-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 4px 12px 4px 8px;
+    border-radius: 50px;
+    margin-bottom: 14px;
+  }
+  .badge-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .badge-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .badge-stress   { background: var(--stress-dim); }
+  .badge-stress .badge-dot  { background: var(--stress); }
+  .badge-stress .badge-text { color: var(--stress); }
+  .badge-physical { background: var(--physical-dim); }
+  .badge-physical .badge-dot  { background: var(--physical); }
+  .badge-physical .badge-text { color: var(--physical); }
+  .badge-mixed    { background: #EEF2F7; }
+  .badge-mixed .badge-dot  { background: var(--muted); }
+  .badge-mixed .badge-text { color: var(--muted); }
+
+  .classification-label {
+    font-family: 'Instrument Serif', serif;
+    font-size: 26px;
+    margin-bottom: 12px;
+    color: var(--navy);
+    letter-spacing: -0.01em;
+  }
+  .classification-summary { font-size: 14px; color: var(--muted); line-height: 1.65; font-weight: 300; }
+
+  /* Section label inside cards */
+  .section-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--teal);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 18px;
+  }
+
+  /* Likelihood bar */
+  .likelihood-bar {
+    height: 10px;
+    border-radius: 50px;
+    overflow: hidden;
+    display: flex;
+    margin-bottom: 14px;
+    background: var(--bg);
+  }
+  .bar-stress   { background: var(--stress); }
+  .bar-physical { background: var(--physical); }
+  .bar-labels { display: flex; gap: 20px; font-size: 13px; }
+  .bar-label { display: flex; align-items: center; gap: 7px; color: var(--muted); }
+  .bar-label-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .bar-label strong {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  /* Signals */
+  .signals { display: flex; flex-direction: column; }
+  .signal-row {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--bg);
+  }
+  .signal-row:first-child { padding-top: 0; }
+  .signal-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .signal-top { display: flex; align-items: flex-start; gap: 12px; }
+  .signal-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 50px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+  .tag-stress   { background: var(--stress-dim); color: #A83E16; }
+  .tag-physical { background: var(--physical-dim); color: #0a6b53; }
+  .tag-mixed    { background: var(--bg); color: var(--muted); }
+  .signal-symptom { font-size: 14px; font-weight: 600; margin-bottom: 3px; color: var(--navy); }
+  .signal-explanation { font-size: 13px; color: var(--muted); line-height: 1.55; font-weight: 300; }
+
+  /* Annotation */
+  .annotation-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    margin-left: 2px;
+  }
+  .annotation-input {
+    flex: 1;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    padding: 7px 12px;
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .annotation-input:focus { border-color: var(--teal); background: white; }
+  .annotation-input::placeholder { color: #9AAAB8; }
+  .save-indicator {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #9AAAB8;
+    white-space: nowrap;
+    min-width: 50px;
+    text-align: right;
+    transition: color 0.2s;
+  }
+  .save-indicator.saved { color: var(--teal); }
+
+  /* Recommendations */
+  .recommendations { display: flex; flex-direction: column; gap: 20px; }
+  .rec-item { display: flex; gap: 14px; align-items: flex-start; }
+  .rec-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    width: 38px;
+    height: 38px;
+    background: var(--bg);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .rec-title { font-size: 14px; font-weight: 600; margin-bottom: 5px; color: var(--navy); }
+  .rec-body { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
+  .rec-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 7px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--teal);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+  }
+  .rec-source:hover { text-decoration: underline; }
+
+  /* Action buttons */
+  .btn-new {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: var(--surface);
+    color: var(--navy);
+    border: 1.5px solid var(--border);
+    border-radius: 50px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+    margin-bottom: 10px;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .btn-new:hover { border-color: var(--teal); color: var(--teal); }
+  .btn-history {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: var(--navy);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    transition: background 0.2s;
+    letter-spacing: 0.01em;
+  }
+  .btn-history:hover { background: var(--teal); }
+  .disclaimer {
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #9AAAB8;
+    margin-top: 28px;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  {% if readonly %}
+    <a href="/history" class="back">← Back to History</a>
+  {% else %}
+    <a href="/" class="back">← Home</a>
+  {% endif %}
+
+  <div class="page-label">Analysis Report</div>
+  <h1>Your Results</h1>
+  <p class="subtitle">Based on your symptom profile and lifestyle snapshot</p>
+
+  {% if result.red_flag %}
+  <div class="red-flag-card">
+    <div class="icon">⚠️</div>
+    <div>
+      <strong>Please consult a doctor</strong>
+      <p>One or more of your symptoms, such as fever, swelling, vomiting, or localized pain, can indicate a physical condition that requires professional evaluation. This tool is not a substitute for medical advice.</p>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="card">
+    <div class="classification-badge badge-{{ result.classification }}">
+      <div class="badge-dot"></div>
+      <span class="badge-text">
+        {% if result.classification == 'stress' %}Stress-Induced
+        {% elif result.classification == 'physical' %}Physical Cause
+        {% else %}Mixed Signals
+        {% endif %}
+      </span>
+    </div>
+    <div class="classification-label">{{ result.label }}</div>
+    <p class="classification-summary">{{ result.summary }}</p>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Stress vs. Physical Likelihood</div>
+    <div class="likelihood-bar">
+      <div class="bar-stress" style="width: {{ result.stress_pct }}%"></div>
+      <div class="bar-physical" style="width: {{ result.physical_pct }}%"></div>
+    </div>
+    <div class="bar-labels">
+      <div class="bar-label">
+        <div class="bar-label-dot" style="background: var(--stress)"></div>
+        <strong>{{ result.stress_pct }}%</strong>&nbsp;Stress-induced
+      </div>
+      <div class="bar-label">
+        <div class="bar-label-dot" style="background: var(--physical)"></div>
+        <strong>{{ result.physical_pct }}%</strong>&nbsp;Physical causes
+      </div>
+    </div>
+  </div>
+
+  {% if result.signals %}
+  <div class="card">
+    <div class="section-title">Signal Breakdown — click any signal to add a note</div>
+    <div class="signals">
+      {% for signal in result.signals %}
+      <div class="signal-row">
+        <div class="signal-top">
+          {% if 'Stress' in signal.tag %}
+            <span class="signal-tag tag-stress">{{ signal.tag }}</span>
+          {% elif 'Physical' in signal.tag %}
+            <span class="signal-tag tag-physical">{{ signal.tag }}</span>
+          {% else %}
+            <span class="signal-tag tag-mixed">{{ signal.tag }}</span>
+          {% endif %}
+          <div>
+            <div class="signal-symptom">{{ signal.symptom }}</div>
+            <div class="signal-explanation">{{ signal.explanation }}</div>
+          </div>
+        </div>
+        <div class="annotation-row">
+          <span style="font-size:13px; color:#9AAAB8; flex-shrink:0;">✎</span>
+          <input
+            class="annotation-input"
+            type="text"
+            placeholder="Add a personal note… e.g. probably caused by a deadline"
+            data-key="{{ signal.symptom }}"
+            value="{{ (annotations if annotations is defined else {})[signal.symptom] if signal.symptom in (annotations if annotations is defined else {}) else '' }}"
+          />
+          <span class="save-indicator" id="ind-{{ loop.index }}"></span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if result.recommendations %}
+  <div class="card">
+    <div class="section-title">Recommended Next Steps</div>
+    <div class="recommendations">
+      {% for rec in result.recommendations %}
+      <div class="rec-item">
+        <div class="rec-icon">
+          {% if 'stress' in rec.title|lower or 'breath' in rec.title|lower %}🧘
+          {% elif 'sleep' in rec.title|lower %}😴
+          {% elif 'talk' in rec.title|lower or 'someone' in rec.title|lower %}💬
+          {% elif 'doctor' in rec.title|lower or 'provider' in rec.title|lower %}🏥
+          {% elif 'monitor' in rec.title|lower or 'track' in rec.title|lower %}📋
+          {% else %}💡
+          {% endif %}
+        </div>
+        <div>
+          <div class="rec-title">{{ rec.title }}</div>
+          <div class="rec-body">{{ rec.body }}</div>
+          {% if rec.source %}
+            <a href="{{ rec.source }}" class="rec-source" target="_blank" rel="noopener">Learn more →</a>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div>
+    <a href="/assessment" class="btn-new">← Start a New Assessment</a>
+    <a href="/history" class="btn-history">View Assessment History</a>
+  </div>
+
+  <p class="disclaimer">⚠ This is for informational purposes only, not a substitute for professional medical advice.</p>
+
+</div>
+
+<script>
+  const ASSESSMENT_ID = {{ assessment_id }};
+  const inputs = document.querySelectorAll('.annotation-input');
+  const timers = {};
+
+  function saveAnnotations(indicatorId) {
+    const allAnnotations = {};
+    inputs.forEach(input => {
+      if (input.value.trim() !== '') {
+        allAnnotations[input.dataset.key] = input.value.trim();
+      }
+    });
+
+    fetch('/annotate/' + ASSESSMENT_ID, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(allAnnotations)
+    }).then(res => {
+      if (res.ok) {
+        const ind = document.getElementById(indicatorId);
+        if (ind) {
+          ind.textContent = 'saved ✓';
+          ind.classList.add('saved');
+          setTimeout(() => {
+            ind.textContent = '';
+            ind.classList.remove('saved');
+          }, 2000);
+        }
+      }
+    });
+  }
+
+  inputs.forEach((input, i) => {
+    const indicatorId = 'ind-' + (i + 1);
+    const ind = document.getElementById(indicatorId);
+
+    input.addEventListener('input', () => {
+      if (ind) { ind.textContent = 'saving…'; ind.classList.remove('saved'); }
+      clearTimeout(timers[i]);
+      timers[i] = setTimeout(() => saveAnnotations(indicatorId), 800);
+    });
+  });
+</script>
+
+</body>
+</html>

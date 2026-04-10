@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sign In — Is it Stress or Physical?</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #EEF2F7;
+    --surface: #FFFFFF;
+    --navy: #0B1F3A;
+    --teal: #0C9B97;
+    --teal-dim: #D6F0EF;
+    --stress: #D95D2B;
+    --text: #0B1F3A;
+    --muted: #5A6A7E;
+    --border: #CDD7E3;
+    --shadow: 0 2px 8px rgba(11,31,58,0.08), 0 12px 40px rgba(11,31,58,0.1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--bg);
+    background-image: radial-gradient(circle, #C5D0DC 1px, transparent 1px);
+    background-size: 28px 28px;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    color: var(--text);
+  }
+  .wrapper {
+    width: 100%;
+    max-width: 420px;
+  }
+  .brand {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .brand-name {
+    font-family: 'Instrument Serif', serif;
+    font-size: 20px;
+    color: var(--navy);
+    letter-spacing: -0.01em;
+  }
+  .brand-name em { font-style: italic; color: var(--teal); }
+  .brand-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: #9AAAB8;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 4px;
+  }
+  .card {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 40px 36px;
+    box-shadow: var(--shadow);
+  }
+  .card-section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--teal);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 6px;
+  }
+  h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 26px;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 28px;
+    font-weight: 300;
+  }
+  .field { margin-bottom: 14px; }
+  label {
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+  input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  input:focus { border-color: var(--teal); background: white; }
+  .btn {
+    width: 100%;
+    padding: 13px;
+    background: var(--navy);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.2s;
+    letter-spacing: 0.01em;
+  }
+  .btn:hover { background: var(--teal); }
+  .btn-register {
+    background: var(--teal);
+  }
+  .btn-register:hover { background: #0a8480; }
+  .error {
+    background: #FEF0EA;
+    border: 1px solid #D95D2B;
+    border-left: 3px solid #D95D2B;
+    color: #A83E16;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 28px 0;
+    color: var(--border);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #9AAAB8;
+    letter-spacing: 0.08em;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .register-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--teal);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 6px;
+  }
+  .register-heading {
+    font-family: 'Instrument Serif', serif;
+    font-size: 20px;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .register-sub {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 300;
+    margin-bottom: 18px;
+  }
+  .disclaimer {
+    text-align: center;
+    margin-top: 20px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: #9AAAB8;
+    letter-spacing: 0.01em;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="brand">
+    <div class="brand-name">Is it <em>stress</em> or physical?</div>
+    <div class="brand-tag">Symptom Analysis Tool</div>
+  </div>
+
+  <div class="card">
+    {% if error %}
+    <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <div class="card-section-label">Sign In</div>
+    <h1>Welcome back</h1>
+    <p class="subtitle">Access your symptom assessments</p>
+
+    <form method="POST" action="/login">
+      <div class="field">
+        <label>Email</label>
+        <input type="email" name="email" placeholder="you@example.com" required/>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" name="password" placeholder="••••••••" required/>
+      </div>
+      <button class="btn" type="submit">Sign In</button>
+    </form>
+
+    <div class="divider">or</div>
+
+    <div class="register-label">New here?</div>
+    <div class="register-heading">Create an account</div>
+    <p class="register-sub">Start tracking your symptoms today</p>
+
+    <form method="POST" action="/register">
+      <div class="field">
+        <label>Email</label>
+        <input type="email" name="email" placeholder="you@example.com" required/>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" name="password" placeholder="Create a password" required/>
+      </div>
+      <button class="btn btn-register" type="submit">Create Account</button>
+    </form>
+
+    <p class="disclaimer">⚠ This is for informational purposes only, not a substitute for professional medical advice.</p>
+  </div>
+</div>
+</body>
+</html>

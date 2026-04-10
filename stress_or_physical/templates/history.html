@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Assessment History</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #EEF2F7;
+    --surface: #FFFFFF;
+    --navy: #0B1F3A;
+    --teal: #0C9B97;
+    --teal-dim: #D6F0EF;
+    --stress: #D95D2B;
+    --physical: #0D8A6A;
+    --text: #0B1F3A;
+    --muted: #5A6A7E;
+    --border: #CDD7E3;
+    --shadow: 0 1px 3px rgba(11,31,58,0.06), 0 4px 16px rgba(11,31,58,0.05);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--bg);
+    padding: 40px 20px;
+    color: var(--text);
+  }
+  .container { max-width: 680px; margin: 0 auto; }
+
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--muted);
+    text-decoration: none;
+    margin-bottom: 32px;
+    letter-spacing: 0.02em;
+    transition: color 0.15s;
+  }
+  .back:hover { color: var(--navy); }
+
+  .page-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--teal);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+  }
+  h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 30px;
+    margin-bottom: 6px;
+    color: var(--navy);
+    letter-spacing: -0.01em;
+  }
+  .subtitle { color: var(--muted); font-size: 14px; font-weight: 300; margin-bottom: 28px; }
+  hr { border: none; border-top: 1px solid var(--border); margin-bottom: 28px; }
+
+  /* Empty state */
+  .empty-state {
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 56px 28px;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+  .empty-icon {
+    width: 56px;
+    height: 56px;
+    background: var(--bg);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    margin: 0 auto 18px;
+  }
+  .empty-state h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px;
+    margin-bottom: 10px;
+    color: var(--navy);
+  }
+  .empty-state p { font-size: 14px; color: var(--muted); margin-bottom: 28px; line-height: 1.6; font-weight: 300; }
+
+  /* History list */
+  .history-list { display: flex; flex-direction: column; gap: 10px; }
+  .history-card {
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 20px 24px;
+    box-shadow: var(--shadow);
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-left: 3px solid transparent;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+  }
+  .history-card:hover {
+    border-left-color: var(--teal);
+    box-shadow: 0 2px 8px rgba(11,31,58,0.08), 0 8px 28px rgba(11,31,58,0.08);
+    transform: translateX(2px);
+  }
+  .card-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .dot-stress   { background: var(--stress); }
+  .dot-physical { background: var(--physical); }
+  .dot-mixed    { background: var(--muted); }
+
+  .card-main { flex: 1; }
+  .card-label { font-size: 15px; font-weight: 600; margin-bottom: 5px; color: var(--navy); }
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+  }
+  .card-meta .sep { color: var(--border); }
+
+  .card-bar-wrap {
+    width: 100px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+  .card-bar {
+    width: 100%;
+    height: 5px;
+    border-radius: 50px;
+    overflow: hidden;
+    display: flex;
+    background: var(--bg);
+  }
+  .card-bar-stress   { background: var(--stress); height: 100%; }
+  .card-bar-physical { background: var(--physical); height: 100%; }
+  .card-pct {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+  }
+  .card-arrow { color: var(--border); font-size: 18px; flex-shrink: 0; }
+
+  /* Buttons */
+  .btn-primary {
+    display: inline-block;
+    padding: 12px 28px;
+    background: var(--navy);
+    color: white;
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.2s;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary:hover { background: var(--teal); }
+  .btn-new-assess {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    padding: 14px;
+    background: var(--navy);
+    color: white;
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.2s;
+    letter-spacing: 0.01em;
+  }
+  .btn-new-assess:hover { background: var(--teal); }
+  .disclaimer {
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #9AAAB8;
+    margin-top: 28px;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <a href="/" class="back">← Home</a>
+  <div class="page-label">Your Records</div>
+  <h1>Assessment History</h1>
+  <p class="subtitle">Your past symptom analyses, most recent first</p>
+  <hr/>
+
+  {% if assessments %}
+    <div class="history-list">
+      {% for a in assessments %}
+        {% set r = a.result %}
+        <a href="/history/{{ a.id }}" class="history-card">
+          <div class="card-dot dot-{{ r.classification }}"></div>
+          <div class="card-main">
+            <div class="card-label">{{ r.label }}</div>
+            <div class="card-meta">
+              <span>{{ a.date.strftime('%b %d, %Y') }}</span>
+              <span class="sep">·</span>
+              <span>{{ a.date.strftime('%I:%M %p') }}</span>
+              {% if r.red_flag %}
+                <span class="sep">·</span>
+                <span style="color: var(--stress);">⚠ red flag</span>
+              {% endif %}
+            </div>
+          </div>
+          <div class="card-bar-wrap">
+            <div class="card-bar">
+              <div class="card-bar-stress" style="width:{{ r.stress_pct }}%"></div>
+              <div class="card-bar-physical" style="width:{{ r.physical_pct }}%"></div>
+            </div>
+            <div class="card-pct">{{ r.stress_pct }}s · {{ r.physical_pct }}p</div>
+          </div>
+          <div class="card-arrow">›</div>
+        </a>
+      {% endfor %}
+    </div>
+    <a href="/assessment" class="btn-new-assess">Start a New Assessment →</a>
+
+  {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">📋</div>
+      <h2>No assessments yet</h2>
+      <p>Complete your first symptom assessment to see your results here.</p>
+      <a href="/assessment" class="btn-primary">Start Your First Assessment →</a>
+    </div>
+  {% endif %}
+
+  <p class="disclaimer">⚠ This is for informational purposes only, not a substitute for professional medical advice.</p>
+
+</div>
+</body>
+</html>

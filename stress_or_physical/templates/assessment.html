@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Your Health Assessment</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #EEF2F7;
+    --surface: #FFFFFF;
+    --navy: #0B1F3A;
+    --teal: #0C9B97;
+    --teal-dim: #D6F0EF;
+    --text: #0B1F3A;
+    --muted: #5A6A7E;
+    --border: #CDD7E3;
+    --shadow: 0 1px 3px rgba(11,31,58,0.06), 0 4px 16px rgba(11,31,58,0.05);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--bg);
+    padding: 40px 20px;
+    color: var(--text);
+  }
+  .container { max-width: 680px; margin: 0 auto; }
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--muted);
+    text-decoration: none;
+    margin-bottom: 32px;
+    letter-spacing: 0.02em;
+    transition: color 0.15s;
+  }
+  .back:hover { color: var(--navy); }
+
+  /* Page header */
+  .page-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--teal);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+  }
+  h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 30px;
+    margin-bottom: 6px;
+    color: var(--navy);
+    letter-spacing: -0.01em;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 300;
+    margin-bottom: 36px;
+  }
+  hr { border: none; border-top: 1px solid var(--border); margin-bottom: 28px; }
+
+  /* Step indicator */
+  .steps {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 32px;
+  }
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+  }
+  .step-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--border);
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .step.active .step-num { background: var(--teal); color: white; }
+  .step-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+  .step.active .step-text { color: var(--teal); }
+  .step-line { flex: 1; height: 1px; background: var(--border); margin: 0 8px; }
+
+  /* Section card */
+  .section {
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 28px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow);
+    border-top: 3px solid var(--border);
+    transition: border-color 0.3s;
+  }
+  .section:focus-within { border-color: var(--teal); }
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--teal);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 10px;
+  }
+  .section h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 5px;
+    color: var(--navy);
+  }
+  .section .hint {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 300;
+    margin-bottom: 22px;
+  }
+
+  /* Symptom chips */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip input[type="checkbox"] { display: none; }
+  .chip label {
+    display: inline-block;
+    padding: 7px 15px;
+    border: 1.5px solid var(--border);
+    border-radius: 50px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 400;
+  }
+  .chip label:hover { border-color: var(--teal); color: var(--teal); }
+  .chip input:checked + label {
+    background: var(--teal);
+    border-color: var(--teal);
+    color: white;
+    font-weight: 500;
+  }
+
+  /* Radio options */
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .option input[type="radio"] { display: none; }
+  .option label {
+    display: block;
+    padding: 11px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--bg);
+    color: var(--text);
+  }
+  .option label:hover { border-color: var(--teal); background: white; }
+  .option input:checked + label {
+    border-color: var(--teal);
+    background: var(--teal-dim);
+    color: #0a6b68;
+    font-weight: 500;
+  }
+
+  /* Slider */
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+  input[type="range"] {
+    flex: 1;
+    accent-color: var(--teal);
+    height: 4px;
+  }
+  .slider-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--teal);
+    min-width: 28px;
+    text-align: center;
+  }
+  .slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: #9AAAB8;
+    letter-spacing: 0.05em;
+    margin-bottom: 20px;
+  }
+
+  .question-group { margin-bottom: 24px; }
+  .question-group:last-child { margin-bottom: 0; }
+  .question-label {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 12px;
+    color: var(--navy);
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 15px;
+    background: var(--navy);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.2s;
+    letter-spacing: 0.01em;
+  }
+  .submit-btn:hover { background: var(--teal); }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="/" class="back">← Back</a>
+
+  <div class="page-label">Health Assessment</div>
+  <h1>Your Symptom Intake</h1>
+  <p class="subtitle">Answer honestly. The more detail you give, the more accurate the analysis</p>
+  <hr/>
+
+  <div class="steps">
+    <div class="step active">
+      <div class="step-num">1</div>
+      <div class="step-text">Symptoms</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step active">
+      <div class="step-num">2</div>
+      <div class="step-text">Context</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step active">
+      <div class="step-num">3</div>
+      <div class="step-text">Lifestyle</div>
+    </div>
+  </div>
+
+  <form method="POST" action="/analyze">
+
+    <!-- STEP 1: SYMPTOMS -->
+    <div class="section">
+      <div class="section-label">Step 01 · Symptoms</div>
+      <h2>What are you experiencing?</h2>
+      <p class="hint">Select all that apply over the past week</p>
+      <div class="chips">
+        <div class="chip"><input type="checkbox" name="symptoms" value="headaches" id="s1"/><label for="s1">Headaches</label></div>
+        <div class="chip"><input type="checkbox" name="symptoms" value="fatigue" id="s2"/><label for="s2">Fatigue</label></div>
+        <div class="chip"><input type="checkbox" name="symptoms" value="chest_tightness" id="s3"/><label for="s3">Chest tightness</label></div>
+        <div class="chip"><input type="checkbox" name="symptoms" value="nausea" id="s4"/><label for="s4">Nausea</label></div>
+        <div class="chip"><input type="checkbox" name="symptoms" value="vomiting" id="s5"/><label for="s5">Vomiting</label></div>
+        <div class="chip"><input type="checkbox" name="symptoms" value="muscle_tension" id="s6"/><label for="s6">Muscle tension / pain</label></div>
+        <div class="chip"><input type="checkbox" name="symptoms" value="dizziness" id="s7"/><label for="s7">Dizziness</label></div>
+        <div class="chip"><input type="checkbox" name="symptoms" value="shortness_of_breath" id="s8"/><label for="s8">Shortness of breath</label></div>
+        <div class="chip"><input type="checkbox" name="symptoms" value="sleep_disturbances" id="s9"/><label for="s9">Sleep disturbances</label></div>
+        <div class="chip"><input type="checkbox" name="symptoms" value="stomach_upset" id="s10"/><label for="s10">Stomach upset / IBS</label></div>
+        <div class="chip"><input type="checkbox" name="symptoms" value="racing_heart" id="s11"/><label for="s11">Racing heart</label></div>
+        <div class="chip"><input type="checkbox" name="symptoms" value="heart_palpitations" id="s12"/><label for="s12">Heart palpitations</label></div>
+        <div class="chip"><input type="checkbox" name="symptoms" value="brain_fog" id="s13"/><label for="s13">Brain fog / poor focus</label></div>
+        <div class="chip"><input type="checkbox" name="symptoms" value="localized_pain" id="s14"/><label for="s14">Localized pain</label></div>
+        <div class="chip"><input type="checkbox" name="symptoms" value="fever_chills" id="s15"/><label for="s15">Fever / chills</label></div>
+        <div class="chip"><input type="checkbox" name="symptoms" value="swelling" id="s16"/><label for="s16">Swelling</label></div>
+        <div class="chip"><input type="checkbox" name="symptoms" value="sweating" id="s17"/><label for="s17">Sweating without exertion</label></div>
+        <div class="chip"><input type="checkbox" name="symptoms" value="trembling" id="s18"/><label for="s18">Trembling / shaking</label></div>
+        <div class="chip"><input type="checkbox" name="symptoms" value="skin_issues" id="s19"/><label for="s19">Skin issues</label></div>
+        <div class="chip"><input type="checkbox" name="symptoms" value="eye_strain" id="s20"/><label for="s20">Eye strain</label></div>
+      </div>
+    </div>
+
+    <!-- STEP 2: CONTEXT -->
+    <div class="section">
+      <div class="section-label">Step 02 · Context</div>
+      <h2>When and how do symptoms appear?</h2>
+      <p class="hint">Help us understand the pattern</p>
+
+      <div class="question-group">
+        <p class="question-label">When are symptoms typically worst?</p>
+        <div class="options">
+          <div class="option"><input type="radio" name="symptom_timing" value="morning" id="t1"/><label for="t1">In the morning (upon waking)</label></div>
+          <div class="option"><input type="radio" name="symptom_timing" value="work_periods" id="t2"/><label for="t2">During or after work / high-demand periods</label></div>
+          <div class="option"><input type="radio" name="symptom_timing" value="evening" id="t3"/><label for="t3">In the evening or at night</label></div>
+          <div class="option"><input type="radio" name="symptom_timing" value="random" id="t4"/><label for="t4">Randomly — no clear pattern</label></div>
+        </div>
+      </div>
+
+      <div class="question-group">
+        <p class="question-label">How long have you been experiencing these symptoms?</p>
+        <div class="options">
+          <div class="option"><input type="radio" name="symptom_duration" value="few_days" id="d1"/><label for="d1">A few days</label></div>
+          <div class="option"><input type="radio" name="symptom_duration" value="one_to_four_weeks" id="d2"/><label for="d2">1–4 weeks</label></div>
+          <div class="option"><input type="radio" name="symptom_duration" value="more_than_month" id="d3"/><label for="d3">More than a month</label></div>
+        </div>
+      </div>
+
+      <div class="question-group">
+        <p class="question-label">Have you seen a doctor about these symptoms?</p>
+        <div class="options">
+          <div class="option"><input type="radio" name="seen_doctor" value="ruled_out" id="dr1"/><label for="dr1">Yes — and a physical cause was ruled out</label></div>
+          <div class="option"><input type="radio" name="seen_doctor" value="no_diagnosis" id="dr2"/><label for="dr2">Yes — but no clear diagnosis was found</label></div>
+          <div class="option"><input type="radio" name="seen_doctor" value="not_yet" id="dr3"/><label for="dr3">No, I haven't seen a doctor yet</label></div>
+        </div>
+      </div>
+
+      <div class="question-group">
+        <p class="question-label">Do symptoms get better when you're relaxed or on vacation?</p>
+        <div class="options">
+          <div class="option"><input type="radio" name="better_relaxed" value="yes" id="br1"/><label for="br1">Yes, noticeably better</label></div>
+          <div class="option"><input type="radio" name="better_relaxed" value="no" id="br2"/><label for="br2">No difference</label></div>
+          <div class="option"><input type="radio" name="better_relaxed" value="unsure" id="br3"/><label for="br3">Not sure</label></div>
+        </div>
+      </div>
+
+      <div class="question-group">
+        <p class="question-label">Have you had these symptoms before during a stressful period?</p>
+        <div class="options">
+          <div class="option"><input type="radio" name="had_before_stressful" value="yes" id="hb1"/><label for="hb1">Yes</label></div>
+          <div class="option"><input type="radio" name="had_before_stressful" value="no" id="hb2"/><label for="hb2">No</label></div>
+          <div class="option"><input type="radio" name="had_before_stressful" value="unsure" id="hb3"/><label for="hb3">Not sure</label></div>
+        </div>
+      </div>
+
+      <div class="question-group">
+        <p class="question-label">Are multiple people around you experiencing similar symptoms?</p>
+        <div class="options">
+          <div class="option"><input type="radio" name="others_sick" value="yes" id="os1"/><label for="os1">Yes</label></div>
+          <div class="option"><input type="radio" name="others_sick" value="no" id="os2"/><label for="os2">No</label></div>
+        </div>
+      </div>
+
+      <div class="question-group">
+        <p class="question-label">Does physical activity make your symptoms better or worse?</p>
+        <div class="options">
+          <div class="option"><input type="radio" name="activity_effect" value="better" id="ae1"/><label for="ae1">Better</label></div>
+          <div class="option"><input type="radio" name="activity_effect" value="worse" id="ae2"/><label for="ae2">Worse</label></div>
+          <div class="option"><input type="radio" name="activity_effect" value="no_effect" id="ae3"/><label for="ae3">No noticeable effect</label></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: LIFESTYLE -->
+    <div class="section">
+      <div class="section-label">Step 03 · Lifestyle Snapshot</div>
+      <h2>Tell us about your current lifestyle</h2>
+      <p class="hint">This context helps the system reason more accurately</p>
+
+      <div class="question-group">
+        <p class="question-label">Current stress level (1 = calm, 10 = overwhelmed)</p>
+        <div class="slider-row">
+          <input type="range" name="stress_level" min="1" max="10" value="5" id="stressSlider"
+            oninput="document.getElementById('stressVal').textContent = this.value"/>
+          <span class="slider-value" id="stressVal">5</span>
+        </div>
+        <div class="slider-labels"><span>Very calm</span><span>Extremely stressed</span></div>
+      </div>
+
+      <div class="question-group">
+        <p class="question-label">Average sleep per night over the past week</p>
+        <div class="options">
+          <div class="option"><input type="radio" name="sleep_quality" value="poor" id="sl1"/><label for="sl1">Less than 6 hours (poor)</label></div>
+          <div class="option"><input type="radio" name="sleep_quality" value="fair" id="sl2"/><label for="sl2">6–7 hours (fair)</label></div>
+          <div class="option"><input type="radio" name="sleep_quality" value="good" id="sl3"/><label for="sl3">7–9 hours (good)</label></div>
+        </div>
+      </div>
+
+      <div class="question-group">
+        <p class="question-label">Have you experienced any major life events recently?</p>
+        <div class="options">
+          <div class="option"><input type="radio" name="life_events" value="significant" id="le1"/><label for="le1">Yes, one or more significant events</label></div>
+          <div class="option"><input type="radio" name="life_events" value="minor" id="le2"/><label for="le2">Minor changes, nothing major</label></div>
+          <div class="option"><input type="radio" name="life_events" value="stable" id="le3"/><label for="le3">No, life has been fairly stable</label></div>
+        </div>
+      </div>
+
+      <div class="question-group">
+        <p class="question-label">How often do you feel overwhelmed by your responsibilities?</p>
+        <div class="options">
+          <div class="option"><input type="radio" name="overwhelmed" value="always" id="ow1"/><label for="ow1">Always</label></div>
+          <div class="option"><input type="radio" name="overwhelmed" value="often" id="ow2"/><label for="ow2">Often</label></div>
+          <div class="option"><input type="radio" name="overwhelmed" value="sometimes" id="ow3"/><label for="ow3">Sometimes</label></div>
+          <div class="option"><input type="radio" name="overwhelmed" value="rarely" id="ow4"/><label for="ow4">Rarely</label></div>
+        </div>
+      </div>
+
+      <div class="question-group">
+        <p class="question-label">Are you currently under major academic or work deadlines?</p>
+        <div class="options">
+          <div class="option"><input type="radio" name="deadlines" value="yes" id="dl1"/><label for="dl1">Yes</label></div>
+          <div class="option"><input type="radio" name="deadlines" value="no" id="dl2"/><label for="dl2">No</label></div>
+        </div>
+      </div>
+
+      <div class="question-group">
+        <p class="question-label">Have you been withdrawing from social activities lately?</p>
+        <div class="options">
+          <div class="option"><input type="radio" name="social_withdrawal" value="yes" id="sw1"/><label for="sw1">Yes</label></div>
+          <div class="option"><input type="radio" name="social_withdrawal" value="no" id="sw2"/><label for="sw2">No</label></div>
+        </div>
+      </div>
+
+      <div class="question-group">
+        <p class="question-label">How would you describe your appetite lately?</p>
+        <div class="options">
+          <div class="option"><input type="radio" name="appetite" value="normal" id="ap1"/><label for="ap1">Normal</label></div>
+          <div class="option"><input type="radio" name="appetite" value="reduced" id="ap2"/><label for="ap2">Reduced</label></div>
+          <div class="option"><input type="radio" name="appetite" value="increased" id="ap3"/><label for="ap3">Increased</label></div>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn">Analyze My Symptoms →</button>
+    </div>
+
+  </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Is it Stress or Physical?</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #EEF2F7;
+    --surface: #FFFFFF;
+    --navy: #0B1F3A;
+    --teal: #0C9B97;
+    --teal-dim: #D6F0EF;
+    --stress: #D95D2B;
+    --physical: #0D8A6A;
+    --text: #0B1F3A;
+    --muted: #5A6A7E;
+    --border: #CDD7E3;
+    --shadow: 0 1px 3px rgba(11,31,58,0.07), 0 6px 20px rgba(11,31,58,0.06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+    /* subtle dot-grid background */
+    background-image: radial-gradient(circle, #C5D0DC 1px, transparent 1px);
+    background-size: 28px 28px;
+    background-color: var(--bg);
+    color: var(--text);
+  }
+  .logout {
+    position: fixed;
+    top: 22px;
+    right: 28px;
+    font-size: 13px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+  }
+  .logout:hover { color: var(--navy); }
+
+  .greeting {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--teal);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .greeting::before, .greeting::after {
+    content: '';
+    display: inline-block;
+    width: 32px;
+    height: 1px;
+    background: var(--teal);
+    opacity: 0.5;
+  }
+  h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(36px, 6vw, 62px);
+    color: var(--navy);
+    line-height: 1.08;
+    max-width: 680px;
+    margin-bottom: 22px;
+    letter-spacing: -0.01em;
+  }
+  h1 em {
+    font-style: italic;
+    color: var(--teal);
+  }
+  .subtitle {
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 460px;
+    line-height: 1.65;
+    margin-bottom: 52px;
+    font-weight: 300;
+  }
+  .cards {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 52px;
+  }
+  .feature-card {
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 24px 20px;
+    width: 172px;
+    text-align: left;
+    box-shadow: var(--shadow);
+    border-top: 3px solid var(--border);
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .feature-card:hover { border-color: var(--teal); transform: translateY(-2px); }
+  .feature-card .icon {
+    width: 36px;
+    height: 36px;
+    background: var(--teal-dim);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    margin-bottom: 14px;
+  }
+  .feature-card h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .feature-card p {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .btn-primary {
+    padding: 15px 44px;
+    background: var(--navy);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary:hover { background: var(--teal); }
+  .btn-secondary {
+    padding: 13px 44px;
+    background: transparent;
+    color: var(--navy);
+    border: 1.5px solid var(--border);
+    border-radius: 50px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--teal); color: var(--teal); }
+  .disclaimer {
+    margin-top: 44px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #9AAAB8;
+    letter-spacing: 0.01em;
+  }
+</style>
+</head>
+<body>
+
+<a href="/logout" class="logout">sign out</a>
+
+<p class="greeting">Hello, {{ username }}</p>
+
+<h1>Is it <em>stress</em> or something physical?</h1>
+
+<p class="subtitle">
+  Describe your symptoms and lifestyle. The system analyzes the patterns
+  to help you understand what might be driving how you feel.
+</p>
+
+<div class="cards">
+  <div class="feature-card">
+    <div class="icon">🔍</div>
+    <h3>Symptom Analysis</h3>
+    <p>Input your current symptoms across multiple categories</p>
+  </div>
+  <div class="feature-card">
+    <div class="icon">⚖️</div>
+    <h3>Likelihood Score</h3>
+    <p>See the stress vs. physical cause breakdown</p>
+  </div>
+  <div class="feature-card">
+    <div class="icon">💡</div>
+    <h3>Recommendations</h3>
+    <p>Personalized next steps based on your unique profile</p>
+  </div>
+</div>
+
+<div class="actions">
+  <a href="/assessment" class="btn-primary">Start Assessment →</a>
+  <a href="/history" class="btn-secondary">Assessment History</a>
+</div>
+
+<p class="disclaimer">
+  ⚠ This is for informational purposes only, not a substitute for professional medical advice.
+</p>
+
+</body>
+</html>
